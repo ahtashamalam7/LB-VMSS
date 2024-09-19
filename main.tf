@@ -15,13 +15,13 @@ provider "azurerm" {
 
 # Create Resource Group
 resource "azurerm_resource_group" "myrg" {
-  name     = "myrg-resources"
+  name     = "testvmss"
   location = "East US"
 }
 
 # Create Virtual Network
 resource "azurerm_virtual_network" "mynet" {
-  name                = "my-vnet"
+  name                = "testvmss"
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.myrg.location
   resource_group_name = azurerm_resource_group.myrg.name
@@ -30,7 +30,7 @@ resource "azurerm_virtual_network" "mynet" {
 
 # Create a Network Security Group (NSG)
 resource "azurerm_network_security_group" "mynsg" {
-  name                = "my-nsg"
+  name                = "testvmss"
   location            = azurerm_resource_group.myrg.location
   resource_group_name = azurerm_resource_group.myrg.name
 
@@ -61,7 +61,7 @@ resource "azurerm_network_security_group" "mynsg" {
 
 # Create Subnet and associate NSG with it
 resource "azurerm_subnet" "mysubnet" {
-  name                 = "my-subnet"
+  name                 = "testvmss"
   resource_group_name  = azurerm_resource_group.myrg.name
   virtual_network_name = azurerm_virtual_network.mynet.name
   address_prefixes     = ["10.0.1.0/24"]
@@ -75,7 +75,7 @@ resource "azurerm_subnet_network_security_group_association" "nsg_assoc_vm2" {
 
 # Create a Public IP for Load Balancer
 resource "azurerm_public_ip" "lb_public_ip" {
-  name                = "my-lb-public-ip"
+  name                = "testvmss"
   location            = azurerm_resource_group.myrg.location
   resource_group_name = azurerm_resource_group.myrg.name
   allocation_method   = "Static"
@@ -85,7 +85,7 @@ resource "azurerm_public_ip" "lb_public_ip" {
 
 # Create Load Balancer
 resource "azurerm_lb" "mylb" {
-  name                = "my-lb"
+  name                = "testvmss"
   location            = azurerm_resource_group.myrg.location
   resource_group_name = azurerm_resource_group.myrg.name
   sku                 = "Standard"
@@ -99,13 +99,13 @@ resource "azurerm_lb" "mylb" {
 # Create Load Balancer Backend Pool
 resource "azurerm_lb_backend_address_pool" "lb_backend_pool" {
   loadbalancer_id = azurerm_lb.mylb.id
-  name            = "my-backend-pool"
+  name            = "testvmss"
 }
 
 # Create Load Balancer Health Probe
 resource "azurerm_lb_probe" "lb_health_probe" {
   loadbalancer_id     = azurerm_lb.mylb.id
-  name                = "my-health-probe"
+  name                = "testvmss"
   protocol            = "Http"
   port                = 80
   request_path        = "/"
@@ -116,7 +116,7 @@ resource "azurerm_lb_probe" "lb_health_probe" {
 # Create Load Balancer Rule for HTTP traffic
 resource "azurerm_lb_rule" "lb_rule" {
   loadbalancer_id                = azurerm_lb.mylb.id
-  name                           = "my-lb-rule"
+  name                           = "testvmss"
   protocol                       = "Tcp"
   frontend_ip_configuration_name = "PublicIPAddress"
   frontend_port                  = 80
@@ -136,7 +136,7 @@ locals {
 
 # Create a Virtual Machine Scale Set (VMSS)
 resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
-  name                = "my-vmss"
+  name                = "testvmss"
   location            = azurerm_resource_group.myrg.location
   resource_group_name = azurerm_resource_group.myrg.name
   sku                 = "Standard_B1s"
@@ -156,7 +156,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
   }
 
   network_interface {
-    name    = "my-vmss-nic"
+    name    = "testvmss"
     primary = true
 
     ip_configuration {
@@ -180,7 +180,7 @@ resource "azurerm_linux_virtual_machine_scale_set" "vmss" {
 
 # Autoscaling for Scale Set (Optional)
 resource "azurerm_monitor_autoscale_setting" "autoscale" {
-  name                = "my-autoscale"
+  name                = "testvmss"
   location            = azurerm_resource_group.myrg.location
   resource_group_name = azurerm_resource_group.myrg.name
   target_resource_id  = azurerm_linux_virtual_machine_scale_set.vmss.id
